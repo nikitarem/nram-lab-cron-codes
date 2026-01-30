@@ -66,8 +66,9 @@ def backup_compose_files(
     compose_backup_dir = backup_dir / compose_backup_dir_name
     compose_backup_dir.mkdir(parents=True, exist_ok=True)
 
-    for compose in compose_list:
-        try:
+    
+    try:
+        for compose in compose_list:
             dir = BASE_DIR / compose
             src_file = dir / COMPOSE_FILENAME
 
@@ -77,8 +78,8 @@ def backup_compose_files(
 
             # Копируем файл в папку назначения
             shutil.copy(src_file, dst_file)
-            msg = "Бекап компосов выполнен успешно."
-            send_msgs(text=msg)
-        except Exception as e:
-            msg = f"Произошла ошибка при бекапе компосов: {e}"
-            send_msgs(text=msg)
+        msg = "Бекап компосов выполнен успешно."
+        send_msgs(text=msg)
+    except Exception as e:
+        msg = f"Произошла ошибка при бекапе компосов: {e}"
+        send_msgs(text=msg)
