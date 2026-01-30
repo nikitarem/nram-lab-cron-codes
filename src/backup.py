@@ -37,8 +37,9 @@ def backup_database(
     """
 
     timestamp = calculate_timestamp()
-    dst_folder = backup_dir / db_backup_dir_name / "".join((timestamp, db_dir_name))
-    dst_folder.mkdir(parents=True, exist_ok=True)
+    bak_folder = backup_dir / db_backup_dir_name
+    bak_folder.mkdir(parents=True, exist_ok=True)
+    dst_folder = bak_folder / "".join((timestamp, db_dir_name))
 
     # Стопаем контейнер, копируем базу, поднимаем контейнер
     try:
