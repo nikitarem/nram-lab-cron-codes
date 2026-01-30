@@ -17,7 +17,7 @@ COMPOSE_FILENAME = "docker-compose.yaml"
 BACKUP_DIR = BASE_DIR / "_server_backups"
 COMPOSE_BACKUP_DIR_NAME = "compose_backups"
 DB_BACKUP_DIR_NAME = "db_backups"
-DB_DIR_NAME = "_db"
+DB_DIR_NAME = "db"
 
 
 def calculate_timestamp():
@@ -37,7 +37,7 @@ def backup_database(
     """
 
     timestamp = calculate_timestamp()
-    dst_folder = backup_dir / db_backup_dir_name / timestamp + db_dir_name
+    dst_folder = backup_dir / db_backup_dir_name / "".join((timestamp, db_dir_name))
     dst_folder.mkdir(parents=True, exist_ok=True)
 
     # Стопаем контейнер, копируем базу, поднимаем контейнер
