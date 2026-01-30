@@ -67,6 +67,14 @@ Cron использует синтаксис из 5 полей для плани
 ### Примеры:
 
 ```bash
+# Приклад
+# Бекап компосов в 8 утра каждого 10 числа месяца из текущего юзера
+0 8 10 * * python3 ~/nram-lab-cron-codes/make_compose_backups.py
+
+# бекап базы в 14-30 каждый день
+30 14 * * * python3 ~/nram-lab-cron-codes/make_database_backup.py
+
+# Теоретические примеры
 # Каждую минуту
 * * * * * /usr/bin/python3 /path/to/script.py >> /var/log/script.log 2>&1
 
