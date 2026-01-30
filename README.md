@@ -10,7 +10,7 @@
 - Делать бекап базы данных.
 - Отправлять сообщение в телегу о том, что бекап сделан, с результатом.
 
-Для запуска задач использовать файлы в папке /scripts
+Для запуска задач использовать скрипты .py.
 
 ## Конфиги
 
@@ -68,17 +68,17 @@ Cron использует синтаксис из 5 полей для плани
 
 ```bash
 # Каждую минуту
-* * * * * /usr/bin/python3 /path/to/script.py >> /var/log/script.log 2>&1 [web:1][web:3]
+* * * * * /usr/bin/python3 /path/to/script.py >> /var/log/script.log 2>&1
 
 # Каждый час
-0 * * * * cd /path/to/dir && /path/to/venv/bin/python script.py [web:1][web:5]
+0 * * * * cd /path/to/dir && /path/to/venv/bin/python script.py
 
 # Ежедневно в 3:00
-0 3 * * * /usr/bin/python3 /home/user/script.py [web:9]
+0 3 * * * /usr/bin/python3 /home/user/script.py
 
 # Каждые 15 мин по будням (1-5)
-*/15 * * * 1-5 python3 /opt/task.py [web:5]
+*/15 * * * 1-5 python3 /opt/task.py
 
 # В 7:30 по воскресеньям
-30 7 * * 0 /usr/bin/python3 /script.py [web:5]
+30 7 * * 0 /usr/bin/python3 /script.py
 ```
