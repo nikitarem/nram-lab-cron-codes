@@ -37,8 +37,8 @@ def backup_database(
     """
 
     timestamp = calculate_timestamp()
-    backup_dir.mkdir(parents=True, exist_ok=True)
     dst_folder = backup_dir / db_backup_dir_name / timestamp + db_dir_name
+    dst_folder.mkdir(parents=True, exist_ok=True)
 
     # Стопаем контейнер, копируем базу, поднимаем контейнер
     try:
@@ -63,7 +63,8 @@ def backup_compose_files(
     """
 
     timestamp = calculate_timestamp()
-    backup_dir.mkdir(parents=True, exist_ok=True)
+    compose_backup_dir = backup_dir / compose_backup_dir_name
+    compose_backup_dir.mkdir(parents=True, exist_ok=True)
 
     for compose in compose_list:
         try:
@@ -72,7 +73,7 @@ def backup_compose_files(
 
             # Обозначаем папку и название дестинейшена
             new_filename = timestamp + compose + "_" + COMPOSE_FILENAME
-            dst_file = backup_dir / compose_backup_dir_name / new_filename
+            dst_file = compose_backup_dir / new_filename
 
             # Копируем файл в папку назначения
             shutil.copy(src_file, dst_file)
