@@ -6,6 +6,7 @@ import shutil
 import subprocess
 
 from src.send import send_msgs
+from src.test import compare_checksums
 
 # Основная папка юзера
 BASE_DIR = Path.home()
@@ -45,6 +46,11 @@ def backup_database(
     try:
         subprocess.run(["docker", "container", "stop", db_container_name])
         shutil.copytree(db_path, dst_folder, symlinks=True)
+        is_ok_backup = compare_checksums(db_path, dst_folder)
+
+        if not is_ok_backup:
+            raise ValueError('Не совпали контрольные суммы бекапа.')
+
         subprocess.run(["docker", "container", "start", db_container_name])
         msg = "Бекап базы успешный, контейнер запущен."
         send_msgs(text=msg)
