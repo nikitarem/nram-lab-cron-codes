@@ -8,10 +8,19 @@
 
 - Делать бекап compose.
 - Делать бекап базы данных.
+- Проверять контрольные суммы для базы данных и сравнивать их, т.е. чекать целостность бекапа.
 - Отправлять сообщение в телегу о том, что бекап сделан, с результатом.
 
 Для запуска задач использовать скрипты .py.
+
 Проверено на **python 3.12.3**
+
+Используемые технологии:
+
+- python3
+- cron
+- docker.io (sudo apt install docker-io docker-compose)
+- helix (sudo add-apt-repository ppa:maveonair/helix-editor && sudo apt update && sudo apt install helix)
 
 ## Конфиги
 
