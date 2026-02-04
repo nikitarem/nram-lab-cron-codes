@@ -8,7 +8,7 @@ from src.send import send_msgs
 
 def dir_checksum(dir_name):
     """Рассчитывает контрольные суммы для одной директории."""
-    script_path = Path(__file__).parent / "calculate_checksums.sh"
+    script_path = Path(__file__).parent / "scripts" / "calculate_checksums.sh"
 
     return subprocess.run(
     ["bash", script_path, dir_name],
