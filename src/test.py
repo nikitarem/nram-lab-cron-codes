@@ -8,16 +8,11 @@ from src.send import send_msgs
 def dir_checksum(dir_name):
     """Рассчитывает контрольные суммы для одной директории."""
     return subprocess.run(
-        [
-            "bash",
-            "-lc",
-            f"cd '{d}' && find . -type f -print0 | sort -z | ",
-            "xargs -0 sha256sum | sha256sum | awk '{{print $1}}'",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
+    ["./calculate_checksums.sh", dir_name],
+    capture_output=True,
+    text=True,
+    check=True,
+)
 
 
 def compare_checksums(dir_original, dir_backup):
