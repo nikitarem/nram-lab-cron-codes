@@ -1,18 +1,21 @@
 """Тесты для проверки работоспособности бекапов."""
 
 import subprocess
+from pathlib import Path
 
 from src.send import send_msgs
 
 
 def dir_checksum(dir_name):
     """Рассчитывает контрольные суммы для одной директории."""
+    script_path = Path(__file__).parent / "calculate_checksums.sh"
+
     return subprocess.run(
-    ["./calculate_checksums.sh", dir_name],
+    ["bash", script_path, dir_name],
     capture_output=True,
     text=True,
     check=True,
-)
+    ).stdout.strip()
 
 
 def compare_checksums(dir_original, dir_backup):
