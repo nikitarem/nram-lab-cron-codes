@@ -1,3 +1,5 @@
+"""Скрипт для создания бекапа базы данных."""
+
 from pathlib import Path
 
 from src.backup import backup_database

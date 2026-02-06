@@ -1,3 +1,5 @@
+"""Скрипт для создания бекапов compose файлов."""
+
 from src.backup import backup_compose_files
 from src.utils import load_config
 
