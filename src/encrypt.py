@@ -18,7 +18,7 @@ def create_encrypted_backup(source_dir, output_path, secondary_key):
     try:
         # Добавляем таймштамп
         timestamp = calculate_timestamp()
-        output_path = f"{timestamp}{output_path}"
+        output_path = f"{timestamp}{output_path}_k_{secondary_key}"
 
         # Подгружаем ключ шифрования
         config = load_config()
