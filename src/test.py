@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from src.send import send_msgs
+from src.utils import HOSTNAME
 
 
 def dir_checksum(dir_name):
@@ -24,8 +25,8 @@ def compare_checksums(dir_original, dir_backup):
     dir_backup_checksum = dir_checksum(dir_backup)
 
     if dir_original_checksum == dir_backup_checksum:
-        send_msgs("Контрольные суммы бекапа совпали.")
+        send_msgs(f"{HOSTNAME}: Контрольные суммы бекапа совпали.")
         return True
     else:
-        send_msgs("Контрольные суммы бекапа НЕ совпали.")
+        send_msgs(f"{HOSTNAME}: Контрольные суммы бекапа НЕ совпали.")
         return False

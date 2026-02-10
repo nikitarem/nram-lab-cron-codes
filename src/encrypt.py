@@ -1,11 +1,13 @@
 """Функции для кодирования архивов для хранения."""
 
+
 import subprocess
-import sys
 import tarfile
+import tempfile
 from pathlib import Path
 
 from src.send import send_msgs
+from src.test import compare_checksums
 from src.utils import load_config, HOSTNAME, calculate_timestamp
 
 
@@ -49,9 +51,39 @@ def create_encrypted_backup(source_dir, output_path, secondary_key):
         send_msgs(f"{HOSTNAME}: Ошибка при шифровании базы: {e}")
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print(f"Usage: {sys.argv[0]} <source_dir> <output_file.enc> <second_key>")
-        sys.exit(1)
+def verify_archive(encrypted_archive, original_dir, primary_key, secondary_key):
+    """Проверяет контрольные суммы архива, сравнивая с оригинальной папкой."""
+    
+    send_msgs(f"{HOSTNAME}: Начинаем проверку архива.")
 
-    create_encrypted_backup(sys.argv[1], sys.argv[2], sys.argv[3])
+    try:
+        decrypt_script = Path(__file__).parent / "scripts" / "decrypt.sh"
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            
+            # Запускаем скрипт дешифровки с указанием директории распаковки
+            proc = subprocess.run(
+                ["bash", str(decrypt_script), primary_key, secondary_key, str(encrypted_archive)],
+                cwd=temp_dir,  # tar распакует в текущую директорию
+                capture_output=True,
+                text=True,
+            )
+            
+            if proc.returncode != 0:
+                raise RuntimeError(f"{HOSTNAME}: Ошибка дешифровки: {proc.stderr}")
+            
+            # Находим распакованную папку (первый элемент в temp_dir)
+            extracted_items = list(temp_dir.iterdir())
+            if not extracted_items:
+                raise RuntimeError("{HOSTNAME}: Архив распаковался в пустую директорию")
+            
+            extract_dir = extracted_items[0]  # папка внутри архива
+            
+            # Сравниваем контрольные суммы
+            result = compare_checksums(original_dir, extract_dir)
+            return result
+
+    except Exception as e:
+        send_msgs(f"{HOSTNAME}: Ошибка при проверке архива: {e}")
+        return False
