@@ -34,7 +34,8 @@
   "chat_ids": ["123456789", "987654321"],
   "compose_list": ["app1", "app2", "app3"],
   "db_container": "db1_container", 
-  "db_path": "app/db"
+  "db_path": "app/db",
+  "encrypt_key": "fabulous_secret_powers"
 }
 ```
 

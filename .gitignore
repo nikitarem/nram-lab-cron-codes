@@ -4,3 +4,4 @@ config.json
 # Кэш
 */__pycache__/*
 .vscode/commands/
+.vscode/settings.json
