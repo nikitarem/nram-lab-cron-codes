@@ -31,16 +31,15 @@ def backup_database(
     """Бекапает базу данных в директорию для бекапов.
     Приписывает к названию папки таймштамп.
     """
+    send_msgs(text=f"{HOSTNAME}: Начинаем бекап базы.")
 
-    timestamp = calculate_timestamp()
-    bak_folder = backup_dir / db_backup_dir_name
-    bak_folder.mkdir(parents=True, exist_ok=True)
-    dst_folder = bak_folder / "".join((timestamp, db_dir_name))
-
-    # Стопаем контейнер, копируем базу, поднимаем контейнер
     try:
-        send_msgs(text=f"{HOSTNAME}: Начинаем бекап базы.")
+        timestamp = calculate_timestamp()
+        bak_folder = backup_dir / db_backup_dir_name
+        bak_folder.mkdir(parents=True, exist_ok=True)
+        dst_folder = bak_folder / "".join((timestamp, db_dir_name))
 
+        # Стопаем контейнер, копируем базу, поднимаем контейнер
         subprocess.run(["docker", "container", "stop", db_container_name])
         shutil.copytree(db_path, dst_folder, symlinks=True)
         is_ok_backup = compare_checksums(db_path, dst_folder)
@@ -65,12 +64,11 @@ def backup_compose_files(
     """Бекапает файлы Compose в директорию для бекапов.
     Приписывает к названию файла дату и время бекапа + название проекта.
     """
-
-    timestamp = calculate_timestamp()
-    compose_backup_dir = backup_dir / compose_backup_dir_name
-    compose_backup_dir.mkdir(parents=True, exist_ok=True)
-
     try:
+        timestamp = calculate_timestamp()
+        compose_backup_dir = backup_dir / compose_backup_dir_name
+        compose_backup_dir.mkdir(parents=True, exist_ok=True)
+
         for compose in compose_list:
             dir = BASE_DIR / compose
             src_file = dir / COMPOSE_FILENAME
