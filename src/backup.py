@@ -1,13 +1,12 @@
 """Функции для выполнения бекапов."""
 
-from datetime import datetime
 from pathlib import Path
 import shutil
-import socket
 import subprocess
 
 from src.send import send_msgs
 from src.test import compare_checksums
+from src.utils import calculate_timestamp, HOSTNAME
 
 # Основная папка юзера
 BASE_DIR = Path.home()
@@ -22,11 +21,6 @@ DB_BACKUP_DIR_NAME = "db_backups"
 DB_DIR_NAME = "db"
 
 
-def calculate_timestamp():
-    """Рассчитывает таймштамп."""
-    return datetime.now().strftime("%Y_%m_%d_%H_")
-
-
 def backup_database(
     db_path,
     db_container_name,
@@ -38,7 +32,6 @@ def backup_database(
     Приписывает к названию папки таймштамп.
     """
 
-    hostname = socket.gethostname()
     timestamp = calculate_timestamp()
     bak_folder = backup_dir / db_backup_dir_name
     bak_folder.mkdir(parents=True, exist_ok=True)
@@ -46,21 +39,21 @@ def backup_database(
 
     # Стопаем контейнер, копируем базу, поднимаем контейнер
     try:
-        send_msgs(text=f"{hostname}: Начинаем бекап базы.")
+        send_msgs(text=f"{HOSTNAME}: Начинаем бекап базы.")
 
         subprocess.run(["docker", "container", "stop", db_container_name])
         shutil.copytree(db_path, dst_folder, symlinks=True)
         is_ok_backup = compare_checksums(db_path, dst_folder)
 
         if not is_ok_backup:
-            raise ValueError('Не совпали контрольные суммы бекапа.')
+            raise ValueError(f"{HOSTNAME}: Не совпали контрольные суммы бекапа.")
 
         subprocess.run(["docker", "container", "start", db_container_name])
-        msg = f"{hostname}: Бекап базы успешный, контейнер запущен."
+        msg = f"{HOSTNAME}: Бекап базы успешный, контейнер запущен."
         send_msgs(text=msg)
     except Exception as e:
         subprocess.run(["docker", "container", "start", db_container_name])
-        msg = f"{hostname}: Произошла ошибка при бекапе базы: {e}"
+        msg = f"{HOSTNAME}: Произошла ошибка при бекапе базы: {e}"
         send_msgs(text=msg)
 
 
@@ -76,7 +69,6 @@ def backup_compose_files(
     timestamp = calculate_timestamp()
     compose_backup_dir = backup_dir / compose_backup_dir_name
     compose_backup_dir.mkdir(parents=True, exist_ok=True)
-    hostname = socket.gethostname()
 
     try:
         for compose in compose_list:
@@ -89,8 +81,8 @@ def backup_compose_files(
 
             # Копируем файл в папку назначения
             shutil.copy(src_file, dst_file)
-        msg = f"{hostname}: Бекап компосов выполнен успешно."
+        msg = f"{HOSTNAME}: Бекап компосов выполнен успешно."
         send_msgs(text=msg)
     except Exception as e:
-        msg = f"{hostname}: Произошла ошибка при бекапе компосов: {e}"
+        msg = f"{HOSTNAME}: Произошла ошибка при бекапе компосов: {e}"
         send_msgs(text=msg)
