@@ -41,7 +41,7 @@ openssl rand -hex 32
   "compose_list": ["app1", "app2", "app3"],
   "db_container": "db1_container", 
   "db_path": "app/db",
-  "encrypt_key": "fabulous_secret_powers"
+  "encrypt_key": "public_key"
 }
 ```
 
@@ -151,3 +151,31 @@ SHA-256|256 бит|✓ Рекомендуется|Бэкапы, дистрибу
 SHA-512|512 бит|✓ Максимальная надёжность|Критичные данные
 
 Особенности: Криптографически стойкие, практически невозможно создать два разных файла с одинаковым хешем (коллизии).
+
+## Асимметричное шифрование данных по приватному и публичному ключу
+
+Асимметричное шифрование использует два связанных неодинаковых ключа: публичный и приватный.
+Публичный ключ можно (но не нужно!) свободно распространять, а приватный должен храниться в защищенном месте.
+Публичный ключ используется для шифрования данных, а приватный — для их расшифровки.
+
+Сгенерируем пару ключей при помощи openssl:
+
+```bash
+# Генерируем приватный ключ alice в текущей папке
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out alice
+
+# Извлекаем публичный ключ alice.pub из приватного alice
+openssl pkey -in alice -out alice.pub -pubout
+```
+
+Тогда шифрование можем сделать так:
+
+```bash
+# Шифруем файл data.txt публичным ключом alice.pub
+openssl pkeyutl -encrypt -pubin -inkey alice.pub -in data.txt -out data.enc
+
+# Дешифруем файл data.enc приватным ключом alice
+openssl pkeyutl -decrypt -inkey alice -in data.enc -out data_decoded.txt
+```
+
+В конфиге используем ПУБЛИЧНЫЙ!!! Ключ.
